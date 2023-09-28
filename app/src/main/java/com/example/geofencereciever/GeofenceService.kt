@@ -65,10 +65,10 @@ class GeofenceService: Service() {
     }
 
     private fun addGeofence() {
-        val geofenceId = "My home"
-        val latitude = 43.474264
-        val longitude = -80.533522
-        val radius = 100.0 // in meters
+        val geofenceId = "MyGeofence"
+        val latitude = 43.475924
+        val longitude = -80.525835
+        val radius = 1.0 // in meters
 
         val geofence = Geofence.Builder()
             .setRequestId(geofenceId)
