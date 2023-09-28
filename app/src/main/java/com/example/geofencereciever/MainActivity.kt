@@ -6,12 +6,23 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    lateinit var mGoogleMap: GoogleMap
+
     private val BACKGROUND_LOCATION_PERMISSION_CODE: Int = 888
     private val LOCATION_PERMISSION_CODE: Int = 999
     private val TAG = MainActivity::class.simpleName.toString()
@@ -23,6 +34,10 @@ class MainActivity : AppCompatActivity() {
         writeLogToFile(TAG, "==============================================")
         writeLogToFile(TAG, "App is launched")
         checkPermission()
+
+        val mapFragment =supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(this)
+
     }
 
     private fun checkPermission() {
@@ -160,4 +175,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mGoogleMap = googleMap
+
+        //Take 1
+        mGoogleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        mGoogleMap.isMyLocationEnabled = true
+    }
+
 }
