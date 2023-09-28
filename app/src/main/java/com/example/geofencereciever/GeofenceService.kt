@@ -29,7 +29,6 @@ class GeofenceService: Service() {
         geofencingClient = LocationServices.getGeofencingClient(this)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.v(TAG, "Geofences")
         val notificationIntent = Intent(this, applicationContext::class.java)

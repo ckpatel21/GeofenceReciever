@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.geofencereciever"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.geofencereciever"
@@ -37,7 +37,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -47,11 +47,13 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
     // Core Kotlin extensions
-    implementation ("androidx.core:core-ktx:1.10.1")
+    implementation ("androidx.core:core-ktx:1.12.0")
 
     // NotificationCompat library (for creating notifications)
-    implementation ("androidx.core:core-ktx:1.10.1")
+    implementation ("androidx.core:core-ktx:1.12.0")
 
     // If you're using the deprecated AsyncTask, you can include the following:
     implementation ("androidx.annotation:annotation:1.7.0")
+
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
 }
