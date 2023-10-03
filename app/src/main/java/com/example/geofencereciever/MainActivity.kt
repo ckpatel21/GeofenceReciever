@@ -21,7 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    lateinit var mGoogleMap: GoogleMap
+    private lateinit var mGoogleMap: GoogleMap
 
     private val BACKGROUND_LOCATION_PERMISSION_CODE: Int = 888
     private val LOCATION_PERMISSION_CODE: Int = 999
