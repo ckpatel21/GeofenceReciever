@@ -19,18 +19,18 @@ class GeofenceBroadcastReceiver: BroadcastReceiver() {
         }
 
         val geofenceTransition = geofencingEvent?.geofenceTransition
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-            geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT
-        ) {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             val triggeringGeofences = geofencingEvent.triggeringGeofences
             triggeringGeofences?.forEach {
+                val transitionType = if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) "entered" else "exited"
+                Toast.makeText(context, "$transitionType  ${it.requestId}", Toast.LENGTH_SHORT).show()
                 context.writeLogToFile(
                     TAG,
-                    "Triggered geofence for latitude: ${it.latitude}, longitude: ${it.longitude}, and radius: ${it.radius}"
+                    "Triggered $transitionType geofence for ${it.requestId} latitude: ${it.latitude}, longitude: ${it.longitude}, and radius: ${it.radius}"
                 )
             }
-            Toast.makeText(context, "Geofence transition: $geofenceTransition", Toast.LENGTH_SHORT)
-                .show()
+
+
             context.writeLogToFile(TAG, "Geofence transition: $geofenceTransition")
             context.writeLogToFile(TAG, "Geofence event finished")
             context.writeLogToFile(TAG, "==============================================")

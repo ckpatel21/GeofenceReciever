@@ -8,6 +8,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -19,6 +20,7 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.CircleOptions
 
 class GeofenceService: Service() {
     private lateinit var geofencingClient: GeofencingClient
@@ -58,21 +60,40 @@ class GeofenceService: Service() {
         // Start the service in the foreground
         startForeground(1, notification)
 
+        val geofenceDataList = listOf(
+            GeofenceData("Home", 43.474201, -80.533469, 100.0),
+            GeofenceData("Location1", 43.473447,  -80.532898, 1000.0),
+            GeofenceData("Location2", 43.472968,  -80.532411, 1000.0),
+            GeofenceData("Location3", 43.471099,  -80.537939, 1000.0),
+            GeofenceData("WLU", 43.474962,   -80.528186, 1000.0),
+            GeofenceData("Starbucks", 43.476183,    -80.525008, 1000.0),
+            GeofenceData("Waterloo Park", 43.466182,    -80.525852, 1000.0),
+            GeofenceData("Victoria park", 43.446920,    -80.494267, 1000.0),
+            GeofenceData("CN Tower", 43.641781,    -79.3864431, 1000.0),
+            // Add more geofences as needed
+        )
+
+            for (geofenceData in geofenceDataList) {
+                addGeofence(geofenceData)
+            }
+
         // Add the geofence
-        addGeofence()
+//        addGeofence()
 
         return START_STICKY
     }
 
-    private fun addGeofence() {
-        val geofenceId = "My home"
-        val latitude = 43.474264
-        val longitude = -80.533522
-        val radius = 100.0 // in meters
+
+
+    private fun addGeofence(geofenceData: GeofenceData) {
+//        val geofenceId = "My home"
+//        val latitude = 43.474264
+//        val longitude = -80.533522
+//        val radius = 100.0 // in meters
 
         val geofence = Geofence.Builder()
-            .setRequestId(geofenceId)
-            .setCircularRegion(latitude, longitude, radius.toFloat())
+            .setRequestId(geofenceData.geofenceId)
+            .setCircularRegion(geofenceData.latitude, geofenceData.longitude, geofenceData.radius.toFloat())
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .build()
@@ -100,9 +121,10 @@ class GeofenceService: Service() {
                     // You can perform additional actions if needed
                     writeLogToFile(
                         TAG,
-                        "Geofence is added for latitude: $latitude, longitude: $longitude and radius: $radius"
+                        "Geofence is added for latitude: $geofenceData.latitude, longitude: $geofenceData.longitude and radius: $geofenceData.radius"
                     )
 
+//                    drawCircleOnMap(latitude,longitude)
                     Toast.makeText(applicationContext, "Added", Toast.LENGTH_SHORT).show()
                 }
                 addOnFailureListener {
@@ -122,6 +144,20 @@ class GeofenceService: Service() {
         }
 
     }
+    data class GeofenceData(val geofenceId: String, val latitude: Double, val longitude: Double, val radius: Double)
+
+//    private fun drawCircleOnMap(latitude: Double, longitude: Double) {
+//        val circleOptions = CircleOptions()
+//            .center()
+//            .radius(RADIUS.toDouble())
+//            .fillColor(0x40ff0000)
+//            .strokeColor(Color.BLUE)
+//            .strokeWidth(2f)
+//
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
+//        mMap.addMarker(MarkerOptions().position(latLng))
+//        mMap.addCircle(circleOptions)
+//    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
