@@ -2,11 +2,17 @@ package com.example.geofencereciever
 
 import android.os.Bundle
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -19,26 +25,70 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(){
 
-    private lateinit var mGoogleMap: GoogleMap
 
     private val BACKGROUND_LOCATION_PERMISSION_CODE: Int = 888
     private val LOCATION_PERMISSION_CODE: Int = 999
     private val TAG = MainActivity::class.simpleName.toString()
 
+    private val activeGeofences = ArrayList<String>()
+
+    private lateinit var geofenceListView: ListView
+    private lateinit var geofenceListAdapter: ArrayAdapter<String>
+
+    private val geofenceReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "GEOFENCE_EVENT") {
+                Toast.makeText(applicationContext, "Received Broadcast", Toast.LENGTH_SHORT).show()
+                writeLogToFile(
+                    TAG,
+                    "Received Broadcast"
+                )
+                val geofenceId = intent.getStringExtra("geofenceId")
+                val entered = intent.getBooleanExtra("entered", true)
+                Toast.makeText(applicationContext, "RB: $geofenceId $entered", Toast.LENGTH_SHORT).show()
+                writeLogToFile(
+                    TAG,
+                    "Received Broadcast RB: $geofenceId $entered"
+                )
+
+                if (entered) {
+                    // Geofence entered, update your list
+                    geofenceId?.let {
+                        Toast.makeText(applicationContext, "entred123", Toast.LENGTH_SHORT).show()
+                        activeGeofences.add(it)
+                        geofenceListAdapter.notifyDataSetChanged()
+                    }
+                } else {
+                    // Geofence exited, remove from the list
+                    geofenceId?.let {
+                        activeGeofences.remove(it)
+                        geofenceListAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        geofenceListView = findViewById(R.id.geofenceListView)
+        geofenceListAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, activeGeofences)
+        geofenceListView.adapter = geofenceListAdapter
 
         writeLogToFile(TAG, "==============================================")
         writeLogToFile(TAG, "App is launched")
         checkPermission()
 
-        val mapFragment =supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
+        // Register the receiver to listen for geofence events
+        val filter = IntentFilter("GEOFENCE_EVENT")
+        registerReceiver(geofenceReceiver, filter)
 
     }
+
 
     private fun checkPermission() {
         writeLogToFile(TAG, "Checking location permission")
@@ -174,31 +224,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 askPermissionForBackgroundUsage()
             }
         }
-    }
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        mGoogleMap = googleMap
-
-        //Take 1
-        mGoogleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        mGoogleMap.isMyLocationEnabled = true
     }
 
 }
