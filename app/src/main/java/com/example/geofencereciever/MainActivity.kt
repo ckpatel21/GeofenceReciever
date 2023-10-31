@@ -40,11 +40,6 @@ class MainActivity : AppCompatActivity(){
     private val geofenceReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "GEOFENCE_EVENT") {
-                Toast.makeText(applicationContext, "Received Broadcast", Toast.LENGTH_SHORT).show()
-                writeLogToFile(
-                    TAG,
-                    "Received Broadcast"
-                )
                 val geofenceId = intent.getStringExtra("geofenceId")
                 val entered = intent.getBooleanExtra("entered", true)
                 Toast.makeText(applicationContext, "RB: $geofenceId $entered", Toast.LENGTH_SHORT).show()
@@ -56,7 +51,6 @@ class MainActivity : AppCompatActivity(){
                 if (entered) {
                     // Geofence entered, update your list
                     geofenceId?.let {
-                        Toast.makeText(applicationContext, "entred123", Toast.LENGTH_SHORT).show()
                         activeGeofences.add(it)
                         geofenceListAdapter.notifyDataSetChanged()
                     }
