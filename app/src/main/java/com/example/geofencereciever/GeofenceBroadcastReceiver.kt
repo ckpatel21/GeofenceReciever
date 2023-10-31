@@ -22,14 +22,27 @@ class GeofenceBroadcastReceiver: BroadcastReceiver() {
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             val triggeringGeofences = geofencingEvent.triggeringGeofences
             triggeringGeofences?.forEach {
-                val transitionType = if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) "entered" else "exited"
+                val transitionType : String
+                val geofenceIntent = Intent("GEOFENCE_EVENT")
+                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER){
+                    transitionType = "entered"
+                    geofenceIntent.putExtra("geofenceId", it.requestId)
+                    geofenceIntent.putExtra("entered", true)
+                    context.sendBroadcast(geofenceIntent)
+                    context.writeLogToFile(TAG, "Geofence entered, checkif broadcast is sent: ${it.requestId}")
+                }else{
+                    transitionType =  "exited"
+                    geofenceIntent.putExtra("geofenceId", it.requestId)
+                    geofenceIntent.putExtra("entered", false)
+                    context.sendBroadcast(geofenceIntent)
+                    context.writeLogToFile(TAG, "Geofence exited,checkif broadcast is sent: ${it.requestId}")
+                }
                 Toast.makeText(context, "$transitionType  ${it.requestId}", Toast.LENGTH_SHORT).show()
                 context.writeLogToFile(
                     TAG,
                     "Triggered $transitionType geofence for ${it.requestId} latitude: ${it.latitude}, longitude: ${it.longitude}, and radius: ${it.radius}"
                 )
             }
-
 
             context.writeLogToFile(TAG, "Geofence transition: $geofenceTransition")
             context.writeLogToFile(TAG, "Geofence event finished")
