@@ -8,19 +8,15 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.CircleOptions
 
 class GeofenceService: Service() {
     private lateinit var geofencingClient: GeofencingClient
@@ -83,9 +79,7 @@ class GeofenceService: Service() {
             // Add more geofences as needed
         )
 
-
         addGeofence(geofenceDataList)
-
 
         return START_STICKY
     }
@@ -93,6 +87,7 @@ class GeofenceService: Service() {
 
 
     private fun addGeofence(geofenceDataList: List<GeofenceData>) {
+
 //        val geofenceId = "My home"
 //        val latitude = 43.474264
 //        val longitude = -80.533522
@@ -147,7 +142,6 @@ class GeofenceService: Service() {
                         )
                     }
 
-//                    drawCircleOnMap(latitude,longitude)
                     Toast.makeText(applicationContext, "Added", Toast.LENGTH_SHORT).show()
                 }
                 addOnFailureListener {
@@ -168,19 +162,6 @@ class GeofenceService: Service() {
 
     }
     data class GeofenceData(val geofenceId: String, val latitude: Double, val longitude: Double, val radius: Double)
-
-//    private fun drawCircleOnMap(latitude: Double, longitude: Double) {
-//        val circleOptions = CircleOptions()
-//            .center()
-//            .radius(RADIUS.toDouble())
-//            .fillColor(0x40ff0000)
-//            .strokeColor(Color.BLUE)
-//            .strokeWidth(2f)
-//
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f))
-//        mMap.addMarker(MarkerOptions().position(latLng))
-//        mMap.addCircle(circleOptions)
-//    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
